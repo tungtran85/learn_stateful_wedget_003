@@ -29,11 +29,17 @@ class RandomWords extends StatefulWidget {
 }
 
 class RandomWordsState extends State<RandomWords> {
-  final _words = <WordPair>[];
+  final List<WordPair> _words = <WordPair>[];
+  final _biggerFont = const TextStyle(fontSize: 18.0);
+  final Set<WordPair> _saved = new Set<WordPair>();
+
   @override
   Widget build(BuildContext context) {
     final wordPair = WordPair.random();
     return ListView.builder(itemBuilder: (context, index) {
+      if (index.isOdd) {
+        return Divider();
+      }
       if (index >= _words.length) {
         _words.addAll(generateWordPairs().take(10));
       }
@@ -42,25 +48,25 @@ class RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildRow(WordPair wordPair) {
+    final bool alreadySaved = _saved.contains(wordPair);
     return ListTile(
       title: Text(
         wordPair.asPascalCase,
-        style: const TextStyle(fontSize: 18.0),
+        style: _biggerFont,
       ),
+      trailing: new Icon(
+        alreadySaved ? Icons.favorite : Icons.favorite_border,
+        color: Colors.red,
+      ),
+      onTap: () {
+        setState(() {
+          if (alreadySaved) {
+            _saved.remove(wordPair);
+          } else {
+            _saved.add(wordPair);
+          }
+        });
+      },
     );
-  }
-}
-
-//v1---------------------------------------
-class RandomWords1 extends StatefulWidget {
-  @override
-  RandomWordsState1 createState() => new RandomWordsState1();
-}
-
-class RandomWordsState1 extends State<RandomWords1> {
-  @override
-  Widget build(BuildContext context) {
-    final wordPair = WordPair.random();
-    return Text(wordPair.asPascalCase);
   }
 }

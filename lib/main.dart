@@ -8,43 +8,44 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final wordPair = WordPair.random();
-    return MaterialApp(
-      title: "Tung little 003",
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Example for Statefull V2"),
-        ),
-        body: Center(
-          child: RandomWords(),
-        ),
-      ),
-    );
+    return MaterialApp(title: "Tung little 003", home: RandomWords());
   }
 }
 
 //v2
 class RandomWords extends StatefulWidget {
   @override
-  RandomWordsState createState() => new RandomWordsState();
+  RandomWordsState createState() => RandomWordsState();
 }
 
 class RandomWordsState extends State<RandomWords> {
   final List<WordPair> _words = <WordPair>[];
   final _biggerFont = const TextStyle(fontSize: 18.0);
-  final Set<WordPair> _saved = new Set<WordPair>();
+  final Set<WordPair> _saved = Set<WordPair>();
 
   @override
   Widget build(BuildContext context) {
-    final wordPair = WordPair.random();
-    return ListView.builder(itemBuilder: (context, index) {
-      if (index.isOdd) {
-        return Divider();
-      }
-      if (index >= _words.length) {
-        _words.addAll(generateWordPairs().take(10));
-      }
-      return _buildRow(_words[index]);
-    });
+    //final wordPair = WordPair.random();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Example for Statefull V2"),
+        actions: <Widget>[
+          IconButton(onPressed: _pushSaved, icon: const Icon(Icons.list))
+        ],
+      ),
+      body: Center(
+        child: ListView.builder(itemBuilder: (context, index) {
+          if (index.isOdd) {
+            return Divider();
+          }
+          if (index >= _words.length) {
+            _words.addAll(generateWordPairs().take(10));
+          }
+          return _buildRow(_words[index]);
+        }),
+      ),
+    );
   }
 
   Widget _buildRow(WordPair wordPair) {
@@ -54,7 +55,7 @@ class RandomWordsState extends State<RandomWords> {
         wordPair.asPascalCase,
         style: _biggerFont,
       ),
-      trailing: new Icon(
+      trailing: Icon(
         alreadySaved ? Icons.favorite : Icons.favorite_border,
         color: Colors.red,
       ),
@@ -68,5 +69,28 @@ class RandomWordsState extends State<RandomWords> {
         });
       },
     );
+  }
+
+  void _pushSaved() {
+    Navigator.of(context)
+        .push(new MaterialPageRoute(builder: (BuildContext context) {
+      final Iterable<ListTile> tiles = _saved.map((WordPair pair) {
+        return ListTile(
+          title: Text(
+            pair.asPascalCase,
+            style: _biggerFont,
+          ),
+        );
+      });
+      final List<Widget> divided = ListTile.divideTiles(tiles: tiles, context: context).toList();
+      return new Scaffold(
+        appBar: AppBar(
+          title: const Text("Save list"),
+        ),
+        body: new ListView(
+          children: divided,
+        ),
+      );
+    }));
   }
 }

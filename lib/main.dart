@@ -8,7 +8,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final wordPair = WordPair.random();
-    return MaterialApp(title: "Tung little 003", home: RandomWords());
+    return MaterialApp(
+        title: "Tung little 003",
+        home: RandomWords(),
+      theme: ThemeData(
+        primaryColor: Colors.red,
+      ),
+    );
   }
 }
 
